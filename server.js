@@ -3,32 +3,26 @@ const dotenv = require("dotenv");
 dotenv.config({ path: "config.env" });
 const morgan = require("morgan");
 const mongoose = require("mongoose");
+const db = require("./config/db");
+const categoryRoute = require("./routes/categoryRoute");
 
+// Connect to db
+db();
+
+// Express app
 const app = express();
 
-// Connect with db
-mongoose
-  .connect(process.env.DB_URI)
-  .then((connection) => {
-    console.log(
-      `Database connected successfully: ${connection.connection.host}`
-    );
-  })
-  .catch((error) => {
-    console.error(`Database connection error: ${error}`);
-    process.exit(1);
-  });
-
+// Middlewares - To use middleware you use 'app.use'
 // Middleware must be before Routing
-// To use middleware you use 'app.use'
+app.use(express.json()); // To convert string to JS Object.
+
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
   console.log(`You are on ${process.env.NODE_ENV} Mode :)`);
 }
 
-app.get("/", (req, res) => {
-  res.send(" Hi from ServerJs :) ");
-});
+// Mount Routes
+app.use("/api/v1/categories", categoryRoute);
 
 const PORT = process.env.PORT || 8000;
 
