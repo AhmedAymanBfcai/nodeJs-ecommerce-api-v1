@@ -6,9 +6,10 @@ const categorySchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, "Category is required!"],
-      unique: [true, "Category must be unique :)"],
+      unique: true, // Catching error here is not working well; name of category can be repeated, Check :)
       minlength: [3, "Too short category name"],
       maxlength: [32, "To long category name"],
+      trim: true,
     },
     // A and B => ex: shopping.com/a-and-b => sulg converts any space with - and any upper case to lower.
     slug: {
