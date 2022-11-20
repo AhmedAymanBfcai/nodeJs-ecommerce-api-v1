@@ -4,6 +4,8 @@ dotenv.config({ path: "config.env" });
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const db = require("./config/db");
+const errorApi = require("./utils/errorApi");
+const globalError = require("./middlewares/errorMiddleware");
 const categoryRoute = require("./routes/categoryRoute");
 
 // Connect to db
@@ -23,6 +25,12 @@ if (process.env.NODE_ENV === "development") {
 
 // Mount Routes
 app.use("/api/v1/categories", categoryRoute);
+app.all("*", (req, res, next) => {
+  next(new errorApi(`Can not fnd this route: ${req.originalUrl}`, 400));
+});
+
+// Global error handling middleware.
+app.use(globalError);
 
 const PORT = process.env.PORT || 8000;
 
