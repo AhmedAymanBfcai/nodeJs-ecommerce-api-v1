@@ -29,11 +29,21 @@ app.all("*", (req, res, next) => {
   next(new errorApi(`Can not fnd this route: ${req.originalUrl}`, 400));
 });
 
-// Global error handling middleware.
+// Global error handling middleware for Express.
 app.use(globalError);
 
 const PORT = process.env.PORT || 8000;
 
-app.listen(PORT, (req, res) => {
+const server = app.listen(PORT, (req, res) => {
   console.log(`Server is up on port ${PORT}`);
+});
+
+// Handling rejections from outside Express.
+process.on("unhandledRejection", (err) => {
+  console.error(`unhandledRejection Error: ${err.name} | ${err.message}}`);
+  // Close server first before exit our app as maybe there some pending requests.
+  server.close(() => {
+    console.log("Shutting down..");
+    process.exit(1);
+  });
 });
