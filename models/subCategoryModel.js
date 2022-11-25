@@ -1,23 +1,26 @@
 const mongoose = require("mongoose");
 
 // 1- Create Schema
-const categorySchema = new mongoose.Schema(
+const subcategorySchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: [true, "Category is required!"],
       unique: [true, "Subcategory must be unique!"], // Catching error here is not working well; name of category can be repeated, Check :)
-      minlength: [3, "Too short category name"],
+      minlength: [2, "Too short category name"],
       maxlength: [32, "Too long category name"],
       trim: true,
     },
-    // A and B => ex: shopping.com/a-and-b => sulg converts any space with - and any upper case to lower.
     slug: {
       type: String,
       lowercase: true,
       slug: "title",
     },
-    image: String,
+    category: {
+      type: mongoose.Schema.ObjectId,
+      ref: "categoryModel",
+      required: [true, "SubCategory must be belong to a parent category."],
+    },
   },
   {
     timestamps: true,
@@ -25,6 +28,6 @@ const categorySchema = new mongoose.Schema(
 );
 
 // 2- Create model
-const categoryModel = mongoose.model("collectionname", categorySchema);
+const categoryModel = mongoose.model("SubCategory", subcategorySchema);
 
 module.exports = categoryModel;
