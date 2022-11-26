@@ -1,12 +1,13 @@
 const express = require("express");
 const dotenv = require("dotenv");
+
 dotenv.config({ path: "config.env" });
 const morgan = require("morgan");
-const mongoose = require("mongoose");
 const db = require("./config/db");
-const errorApi = require("./utils/errorApi");
+const ErrorApi = require("./utils/errorApi");
 const globalError = require("./middlewares/errorMiddleware");
 const categoryRoute = require("./routes/categoryRoute");
+const subCategoryRoute = require("./routes/subCategoryRoute");
 
 // Connect to db
 db();
@@ -25,8 +26,10 @@ if (process.env.NODE_ENV === "development") {
 
 // Mount Routes
 app.use("/api/v1/categories", categoryRoute);
+app.use("/api/v1/subcategories", subCategoryRoute);
+
 app.all("*", (req, res, next) => {
-  next(new errorApi(`Can not fnd this route: ${req.originalUrl}`, 400));
+  next(new ErrorApi(`Can not fnd this route: ${req.originalUrl}`, 400));
 });
 
 // Global error handling middleware for Express.

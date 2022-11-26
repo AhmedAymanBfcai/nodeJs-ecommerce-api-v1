@@ -1,13 +1,13 @@
-const CategoryModel = require("../models/categoryModel");
-const slugify = require("slugify");
 const asyncHandler = require("express-async-handler");
-const errorApi = require("../utils/errorApi");
+const slugify = require("slugify");
+const CategoryModel = require("../models/categoryModel");
+const ErrorApi = require("../utils/errorApi");
 
 // @desc      Create Category
 // @route     POST /api/v1/categories
 // access     Private
 exports.createCategory = asyncHandler(async (req, res) => {
-  const name = req.body.name;
+  const { name } = req.body;
 
   const category = await CategoryModel.create({ name, slug: slugify(name) });
   res.status(201).json({ data: category });
@@ -33,7 +33,7 @@ exports.getCategory = asyncHandler(async (req, res, next) => {
 
   const category = await CategoryModel.findById(id);
   if (!category) {
-    return next(new errorApi(`No category for this Id: ${id}`, 404));
+    return next(new ErrorApi(`No category for this Id: ${id}`, 404));
   }
 
   res.status(200).json({ data: category });
@@ -53,7 +53,7 @@ exports.updateCategory = asyncHandler(async (req, res, next) => {
   );
 
   if (!category) {
-    return next(new errorApi(`No category for this Id: ${id}`, 404));
+    return next(new ErrorApi(`No category for this Id: ${id}`, 404));
   }
 
   res.status(200).json({ data: category });
@@ -67,7 +67,7 @@ exports.deleteCategory = asyncHandler(async (req, res, next) => {
   const category = await CategoryModel.findByIdAndDelete(id);
 
   if (!category) {
-    return next(new errorApi(`No category for this Id: ${id}`, 404));
+    return next(new ErrorApi(`No category for this Id: ${id}`, 404));
   }
 
   res.status(200).json({ data: category });

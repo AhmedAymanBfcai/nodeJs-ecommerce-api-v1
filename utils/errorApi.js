@@ -1,6 +1,6 @@
 // @des     This class is responsible about operation errors (errors I can predict);
 
-class errorApi extends Error {
+class ErrorApi extends Error {
   constructor(message, statusCode) {
     super(message);
     this.statusCode = statusCode;
@@ -9,4 +9,4 @@ class errorApi extends Error {
   }
 }
 
-module.exports = errorApi;
+module.exports = ErrorApi;
