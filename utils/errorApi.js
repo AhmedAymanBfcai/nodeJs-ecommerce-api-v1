@@ -1,4 +1,4 @@
-// @des     This class is responsible about operation errors (errors I can predict);
+// @des     This class is responsible for operationl errors (errors I can predict);
 
 class ErrorApi extends Error {
   constructor(message, statusCode) {

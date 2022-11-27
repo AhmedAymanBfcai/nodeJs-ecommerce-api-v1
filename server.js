@@ -3,13 +3,15 @@ const dotenv = require("dotenv");
 
 dotenv.config({ path: "config.env" });
 const morgan = require("morgan");
-const db = require("./config/db");
+
 const ErrorApi = require("./utils/errorApi");
 const globalError = require("./middlewares/errorMiddleware");
 const categoryRoute = require("./routes/categoryRoute");
 const subCategoryRoute = require("./routes/subCategoryRoute");
 
 // Connect to db
+const db = require("./config/db");
+
 db();
 
 // Express app

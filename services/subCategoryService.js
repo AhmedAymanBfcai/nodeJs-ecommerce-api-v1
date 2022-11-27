@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
+const mongoose = require("mongoose");
 const ErrorApi = require("../utils/errorApi");
 
 const subcategory = require("../models/subCategoryModel");
@@ -27,12 +28,14 @@ exports.getSubCategories = asyncHandler(async (req, res) => {
   const skip = (page - 1) * limit;
 
   const subCategories = await subcategory.find({}).skip(skip).limit(limit);
+  //.populate({ path: "Category", select: "name" }); // {errMsg: Schema hasn't been registered for model}
+
   res
     .status(200)
     .json({ results: subCategories.length, page, data: subCategories });
 });
 
-// @desc      Get Sub category By Id
+// @desc      Get Subcategory By Id
 // @route     GET /api/v1/subcategories/:id
 // access     Public
 exports.getSubCategory = asyncHandler(async (req, res, next) => {
@@ -67,7 +70,7 @@ exports.updateSubCategory = asyncHandler(async (req, res, next) => {
 });
 
 // @desc      Delete SubCategory By Id
-// @route     DELETE /api/v1/categories/:id
+// @route     DELETE /api/v1/subcategories/:id
 // access     Private
 exports.deleteSubCategory = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
