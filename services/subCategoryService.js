@@ -1,9 +1,13 @@
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
-const mongoose = require("mongoose");
 const ErrorApi = require("../utils/errorApi");
-
 const subcategory = require("../models/subCategoryModel");
+
+exports.setCategoryIdToBody = (req, res, next) => {
+  // TO apply Nested Routes.
+  if (!req.body.category) req.body.category = req.params.categoryId;
+  next();
+};
 
 // @desc      Create Sub Category
 // @route     POST /api/v1/subcategories
@@ -19,6 +23,13 @@ exports.createSubCategory = asyncHandler(async (req, res) => {
   res.status(201).json({ data: subCategory });
 });
 
+exports.createFilterObj = (req, res, next) => {
+  let filterObj = {};
+  if (req.params.categoryId) filterObj = { category: req.params.categoryId };
+  req.filterObj = filterObj;
+  next();
+};
+
 // @desc      Get all Subcategories
 // @route     GET /api/v1/subcategories
 // access     Public
@@ -27,7 +38,10 @@ exports.getSubCategories = asyncHandler(async (req, res) => {
   const limit = req.query.limit * 5 || 5;
   const skip = (page - 1) * limit;
 
-  const subCategories = await subcategory.find({}).skip(skip).limit(limit);
+  const subCategories = await subcategory
+    .find(req.filterObj)
+    .skip(skip)
+    .limit(limit);
   //.populate({ path: "Category", select: "name" }); // {errMsg: Schema hasn't been registered for model}
 
   res
