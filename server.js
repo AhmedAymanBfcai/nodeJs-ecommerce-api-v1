@@ -9,7 +9,7 @@ const globalError = require("./middlewares/errorMiddleware");
 const categoryRoute = require("./routes/categoryRoute");
 const subCategoryRoute = require("./routes/subCategoryRoute");
 const brandRoute = require("./routes/brandRoute");
-const productRoute = require("./routes/producRoute");
+const productRoute = require("./routes/productRoute");
 
 // Connect to db
 const db = require("./config/db");
