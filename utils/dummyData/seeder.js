@@ -1,5 +1,6 @@
+// This file to add our dummy data to our DB without adding it mannualy. ex: Postman.
 const fs = require("fs");
-// require("colors");
+require("colors");
 const dotenv = require("dotenv");
 const Product = require("../../models/productModel");
 const dbConnection = require("../../config/db");
@@ -37,7 +38,9 @@ const destroyData = async () => {
 
 // node seeder.js -d
 if (process.argv[2] === "-i") {
+  // node seeder.js -i
   insertData();
 } else if (process.argv[2] === "-d") {
+  // node seeder.js -d
   destroyData();
 }
