@@ -32,10 +32,26 @@ exports.getProducts = asyncHandler(async (req, res) => {
   const skip = (page - 1) * limit;
 
   // Build query
-  const mongooseQuery = Product.find(queryStringObj).skip(skip).limit(limit);
+  let mongooseQuery = Product.find(queryStringObj).skip(skip).limit(limit);
   // .populate({ path: "category", select: "name -_id" });
 
-  // Execue query
+  // 3) Sorting
+  if (req.query.sort) {
+    const sortBy = req.query.sort.splice(" , ").join(" ");
+    mongooseQuery = mongooseQuery.sort(sortBy);
+  } else {
+    mongooseQuery = mongooseQuery.sort("-createdAt");
+  }
+
+  // 4) Fields Limiting
+  if (req.query.fields) {
+    const fields = req.query.fields.split(",").join(" ");
+    mongooseQuery = mongooseQuery.select(fields);
+  } else {
+    mongooseQuery = mongooseQuery.select("-__v");
+  }
+
+  // Execute query
   const products = await mongooseQuery; // To chain any number of methods you may need:)
 
   res.status(200).json({ results: products.length, page, data: products });
