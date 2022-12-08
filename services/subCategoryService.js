@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
 const ErrorApi = require("../utils/errorApi");
 const subcategory = require("../models/subCategoryModel");
+const ApiFeatures = require("../utils/apiFeatures");
 
 exports.setCategoryIdToBody = (req, res, next) => {
   // TO apply Nested Routes.
@@ -34,19 +35,25 @@ exports.createFilterObj = (req, res, next) => {
 // @route     GET /api/v1/subcategories
 // access     Public
 exports.getSubCategories = asyncHandler(async (req, res) => {
-  const page = req.query.page * 1 || 1; // *1 to convert the output to string.
-  const limit = req.query.limit * 5 || 5;
-  const skip = (page - 1) * limit;
+  // Build query
+  const documentCounts = await subcategory.countDocuments();
 
-  const subCategories = await subcategory
-    .find(req.filterObj)
-    .skip(skip)
-    .limit(limit);
-  //.populate({ path: "Category", select: "name" }); // {errMsg: Schema hasn't been registered for model}
+  const apiFeatures = new ApiFeatures(subcategory.find(), req.query)
+    .paginate(documentCounts)
+    .filter()
+    .search()
+    .limitFields()
+    .sort();
 
-  res
-    .status(200)
-    .json({ results: subCategories.length, page, data: subCategories });
+  // Execute query
+  const { mongooseQuery, paginationResult } = apiFeatures;
+  const subCategories = await mongooseQuery;
+
+  res.status(200).json({
+    results: subCategories.length,
+    paginationResult,
+    data: subCategories,
+  });
 });
 
 // @desc      Get Subcategory By Id
