@@ -15,3 +15,18 @@ exports.deleteOne = (Model) =>
     // document.remove();
     res.status(200).json({ data: document });
   });
+
+exports.updateOne = (Model) =>
+  asyncHandler(async (req, res, next) => {
+    const document = await Model.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+
+    if (!document) {
+      return next(
+        new ErrorApi(`No ${Model} for this Id: ${req.params.id}`, 404)
+      );
+    }
+
+    res.status(200).json({ data: document });
+  });
