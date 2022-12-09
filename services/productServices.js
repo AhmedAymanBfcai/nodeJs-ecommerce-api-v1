@@ -3,6 +3,7 @@ const slugify = require("slugify");
 const Product = require("../models/productModel");
 const ErrorApi = require("../utils/errorApi");
 const ApiFeatures = require("../utils/apiFeatures");
+const factory = require("./handlersFactory");
 
 // @desc      Create Product
 // @route     POST /api/v1/products
@@ -73,13 +74,4 @@ exports.updateProduct = asyncHandler(async (req, res, next) => {
 // @desc      Delete Product By Id
 // @route     DELETE /api/v1/products/:id
 // access     Private
-exports.deleteProduct = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const product = await Product.findByIdAndDelete(id);
-
-  if (!product) {
-    return next(new ErrorApi(`No product for this Id: ${id}`, 404));
-  }
-
-  res.status(200).json({ data: product });
-});
+exports.deleteProduct = factory.deleteOne(Product);

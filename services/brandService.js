@@ -1,17 +1,18 @@
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
-const brandModel = require("../models/brandModel");
+const Brand = require("../models/brandModel");
 const ErrorApi = require("../utils/errorApi");
 const ApiFeatures = require("../utils/apiFeatures");
+const factory = require("./handlersFactory");
 
 // @desc      Get all Brands
 // @route     GET /api/v1/brands
 // access     Public
 exports.getBrands = asyncHandler(async (req, res) => {
   // Build query
-  const documentCounts = await brandModel.countDocuments();
+  const documentCounts = await Brand.countDocuments();
 
-  const apiFeatures = new ApiFeatures(brandModel.find(), req.query)
+  const apiFeatures = new ApiFeatures(Brand.find(), req.query)
     .paginate(documentCounts)
     .filter()
     .search()
@@ -33,7 +34,7 @@ exports.getBrands = asyncHandler(async (req, res) => {
 exports.createBrand = asyncHandler(async (req, res) => {
   const { name } = req.body;
 
-  const brand = await brandModel.create({ name, slug: slugify(name) });
+  const brand = await Brand.create({ name, slug: slugify(name) });
   res.status(201).json({ data: brand });
 });
 
@@ -43,7 +44,7 @@ exports.createBrand = asyncHandler(async (req, res) => {
 exports.getBrand = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const brand = await brandModel.findById(id);
+  const brand = await Brand.findById(id);
   if (!brand) {
     return next(new ErrorApi(`No category for this Id: ${id}`, 404));
   }
@@ -58,7 +59,7 @@ exports.updateBrand = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const { name } = req.body;
 
-  const brand = await brandModel.findOneAndUpdate(
+  const brand = await Brand.findOneAndUpdate(
     { _id: id },
     { name, slug: slugify(name) },
     { new: true }
@@ -74,13 +75,4 @@ exports.updateBrand = asyncHandler(async (req, res, next) => {
 // @desc      Delete Brand By Id
 // @route     DELETE /api/v1/brands/:id
 // access     Private
-exports.deleteBrand = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const brand = await brandModel.findByIdAndDelete(id);
-
-  if (!brand) {
-    return next(new ErrorApi(`No Brand for this Id: ${id}`, 404));
-  }
-
-  res.status(200).json({ data: brand });
-});
+exports.deleteBrand = factory.deleteOne(Brand);
