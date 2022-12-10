@@ -1,10 +1,8 @@
-const asyncHandler = require("express-async-handler");
-const slugify = require("slugify");
-const ErrorApi = require("../utils/errorApi");
 const SubCategory = require("../models/subCategoryModel");
-const ApiFeatures = require("../utils/apiFeatures");
 const factory = require("./handlersFactory");
 
+// Nested Route
+// GET /api/v1/categories/:categoryId/subcategories
 exports.createFilterObj = (req, res, next) => {
   let filterObj = {};
   if (req.params.categoryId) filterObj = { category: req.params.categoryId };
@@ -12,33 +10,8 @@ exports.createFilterObj = (req, res, next) => {
   next();
 };
 
-// @desc      Get all Subcategories
-// @route     GET /api/v1/subcategories
-// access     Public
-exports.getSubCategories = asyncHandler(async (req, res) => {
-  // Build query
-  const documentCounts = await SubCategory.countDocuments();
-
-  const apiFeatures = new ApiFeatures(SubCategory.find(), req.query)
-    .paginate(documentCounts)
-    .filter()
-    .search()
-    .limitFields()
-    .sort();
-
-  // Execute query
-  const { mongooseQuery, paginationResult } = apiFeatures;
-  const subCategories = await mongooseQuery;
-
-  res.status(200).json({
-    results: subCategories.length,
-    paginationResult,
-    data: subCategories,
-  });
-});
-
 exports.setCategoryIdToBody = (req, res, next) => {
-  // TO apply Nested Routes.
+  // Nested Route (Create)
   if (!req.body.category) req.body.category = req.params.categoryId;
   next();
 };
@@ -52,6 +25,11 @@ exports.createSubCategory = factory.createOne(SubCategory);
 // @route     GET /api/v1/subcategories/:id
 // access     Public
 exports.getSubCategory = factory.getOne(SubCategory);
+
+// @desc      Get all Subcategories
+// @route     GET /api/v1/subcategories
+// access     Public
+exports.getSubCategories = factory.getAll(SubCategory);
 
 // @desc      Update SubCategory By Id
 // @route     PUT /api/v1/subcategories/:id
