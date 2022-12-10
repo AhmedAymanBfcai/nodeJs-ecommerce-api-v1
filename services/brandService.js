@@ -28,17 +28,7 @@ exports.getBrands = asyncHandler(async (req, res) => {
     .json({ results: brands.length, paginationResult, data: brands });
 });
 
-// @desc      Create Brand
-// @route     POST /api/v1/brands
-// access     Private
-exports.createBrand = asyncHandler(async (req, res) => {
-  const { name } = req.body;
-
-  const brand = await Brand.create({ name, slug: slugify(name) });
-  res.status(201).json({ data: brand });
-});
-
-// @desc      Get Brand By Id
+// @desc      Get Brand B y Id
 // @route     GET /api/v1/brands/:id
 // access     Public
 exports.getBrand = asyncHandler(async (req, res, next) => {
@@ -51,6 +41,11 @@ exports.getBrand = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({ data: brand });
 });
+
+// @desc      Create Brand
+// @route     POST /api/v1/brands
+// access     Private
+exports.createBrand = factory.createOne(Brand);
 
 // @desc      Update Brand By Id
 // @route     PUT /api/v1/brands/:id

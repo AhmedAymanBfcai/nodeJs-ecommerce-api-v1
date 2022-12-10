@@ -10,6 +10,10 @@ exports.createProductValidator = [
     .withMessage("must be at least 3 chars")
     .notEmpty()
     .withMessage("Product required")
+    .custom((value, { req }) => {
+      req.body.slug = slugify(value);
+      return true;
+    })
     .custom((val, { req }) => {
       req.body.slug = slugify(val);
       return true;
