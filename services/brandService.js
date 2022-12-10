@@ -31,16 +31,7 @@ exports.getBrands = asyncHandler(async (req, res) => {
 // @desc      Get Brand B y Id
 // @route     GET /api/v1/brands/:id
 // access     Public
-exports.getBrand = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-
-  const brand = await Brand.findById(id);
-  if (!brand) {
-    return next(new ErrorApi(`No category for this Id: ${id}`, 404));
-  }
-
-  res.status(200).json({ data: brand });
-});
+exports.getBrand = factory.getOne(Brand);
 
 // @desc      Create Brand
 // @route     POST /api/v1/brands

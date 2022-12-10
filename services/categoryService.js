@@ -5,11 +5,6 @@ const ErrorApi = require("../utils/errorApi");
 const ApiFeatures = require("../utils/apiFeatures");
 const factory = require("./handlersFactory");
 
-// @desc      Create Category
-// @route     POST /api/v1/categories
-// access     Private
-exports.createCategory = factory.createOne(Category);
-
 // @desc      Get all categories
 // @route     GET /api/v1/categories
 // access     Public
@@ -34,19 +29,15 @@ exports.getCategories = asyncHandler(async (req, res) => {
     .json({ results: categories.length, paginationResult, data: categories });
 });
 
+// @desc      Create Category
+// @route     POST /api/v1/categories
+// access     Private
+exports.createCategory = factory.createOne(Category);
+
 // @desc      Get category By Id
 // @route     GET /api/v1/categories/:id
 // access     Public
-exports.getCategory = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-
-  const category = await Category.findById(id);
-  if (!category) {
-    return next(new ErrorApi(`No category for this Id: ${id}`, 404));
-  }
-
-  res.status(200).json({ data: category });
-});
+exports.getCategory = factory.getOne(Category);
 
 // @desc      Update Category By Id
 // @route     PUT /api/v1/categories/:id

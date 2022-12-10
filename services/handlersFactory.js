@@ -36,3 +36,15 @@ exports.createOne = (Model) =>
     const document = await Model.create(req.body);
     res.status(201).json({ data: document });
   });
+
+exports.getOne = (Model) =>
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+
+    const document = await Model.findById(id);
+    if (!document) {
+      return next(new ErrorApi(`No document for this Id: ${id}`, 404));
+    }
+
+    res.status(200).json({ data: document });
+  });

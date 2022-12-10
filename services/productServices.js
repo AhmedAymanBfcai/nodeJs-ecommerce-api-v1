@@ -5,11 +5,6 @@ const ErrorApi = require("../utils/errorApi");
 const ApiFeatures = require("../utils/apiFeatures");
 const factory = require("./handlersFactory");
 
-// @desc      Create Product
-// @route     POST /api/v1/products
-// access     Private
-exports.createProduct = factory.createOne(Product);
-
 // @desc      Get all products
 // @route     GET /api/v1/products
 // access     Public
@@ -34,19 +29,15 @@ exports.getProducts = asyncHandler(async (req, res) => {
     .json({ results: products.length, paginationResult, data: products });
 });
 
+// @desc      Create Product
+// @route     POST /api/v1/products
+// access     Private
+exports.createProduct = factory.createOne(Product);
+
 // @desc      Get product By Id
 // @route     GET /api/v1/products/:id
 // access     Public
-exports.getProduct = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-
-  const product = await Product.findById(id);
-  if (!product) {
-    return next(new ErrorApi(`No product for this Id: ${id}`, 404));
-  }
-
-  res.status(200).json({ data: product });
-});
+exports.getProduct = factory.getOne(Product);
 
 // @desc      Update Product By Id
 // @route     PUT /api/v1/products/:id
